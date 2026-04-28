@@ -111,6 +111,15 @@ User sees suspicious sports content
 
 # FACT / SUS / CAP
 
+# Live Demo
+
+## Firebase Hosting Link
+
+https://sportsnap-ai.web.app
+
+Prototype deployed and accessible for judges and demo evaluation.
+
+
 with:
 
 * Confidence Score
