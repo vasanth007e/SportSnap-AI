@@ -1,0 +1,12 @@
+{
+  "name": "SportSnap AI",
+  "description": "High-performance media forensic analysis for elite sports reporters and fans to verify rumors and deepfakes.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "AI-powered media verification",
+    "Deepfake detection",
+    "Sports news forensics"
+  ]
+}
