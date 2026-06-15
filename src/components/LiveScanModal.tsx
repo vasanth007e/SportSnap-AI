@@ -1,7 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Camera, Loader2, ShieldCheck, AlertTriangle, Zap } from 'lucide-react';
 import { verifyClaimWithGemini, VerificationResultData } from '@/src/lib/gemini';
+import ReactCrop, {
+  Crop,
+  centerCrop,
+  makeAspectCrop
+} from "react-image-crop";
+
+import "react-image-crop/dist/ReactCrop.css";
+import { saveVerificationResult } from "@/src/services/firestore";
 
 interface LiveScanModalProps {
   isOpen: boolean;
@@ -9,7 +17,11 @@ interface LiveScanModalProps {
   onVerify: (result: VerificationResultData) => void;
 }
 
-type ScanStep = 'select' | 'scanning' | 'analyzing' | 'error';
+type ScanStep =
+  | 'select'
+  | 'preview'
+  | 'analyzing'
+  | 'error';
 
 const SCENARIOS = [
   {
@@ -64,6 +76,82 @@ export default function LiveScanModal({ isOpen, onClose, onVerify }: LiveScanMod
   const [scanText, setScanText] = useState(SCAN_TEXTS[0]);
   const [scanProgress, setScanProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
+  const [capturedImage, setCapturedImage] = useState<string>('');
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<Crop>();
+  const [showImageViewer, setShowImageViewer] = useState(false);
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const [croppedImage, setCroppedImage] = useState<string>("");
+
+const handleScreenCapture = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: true
+    });
+
+    const video = document.createElement("video");
+    video.srcObject = stream;
+
+    await video.play();
+    console.log(
+  "Video size:",
+  video.videoWidth,
+  video.videoHeight
+);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0);
+
+    const image = canvas.toDataURL("image/png");
+    console.log("Image length:", image.length);
+
+    setCapturedImage(image);
+    setStep("preview");
+
+    stream.getTracks().forEach(track => track.stop());
+  } catch (error) {
+    console.error("Capture failed:", error);
+  }
+};
+const getCroppedImage = () => {
+  if (!imageRef.current || !completedCrop) {
+    return capturedImage;
+  }
+
+  const canvas = document.createElement("canvas");
+  const image = imageRef.current;
+
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) return capturedImage;
+
+  canvas.width = completedCrop.width || 0;
+  canvas.height = completedCrop.height || 0;
+
+  ctx.drawImage(
+    image,
+    (completedCrop.x || 0) * scaleX,
+    (completedCrop.y || 0) * scaleY,
+    (completedCrop.width || 0) * scaleX,
+    (completedCrop.height || 0) * scaleY,
+    0,
+    0,
+    completedCrop.width || 0,
+    completedCrop.height || 0
+  );
+
+  return canvas.toDataURL("image/png");
+};
 
   // Reset whenever modal opens
   useEffect(() => {
@@ -183,33 +271,112 @@ export default function LiveScanModal({ isOpen, onClose, onVerify }: LiveScanMod
                   Capture Suspicious Content
                 </h2>
                 <p className="text-slate-400 text-sm mb-7 leading-relaxed">
-                  Select the content type you've spotted. SportSnap AI will simulate a screen
+                  Select the content type you've spotted. SportSnap AI will screen
                   capture and run full media forensic verification.
                 </p>
 
                 <div className="space-y-2.5">
-                  {SCENARIOS.map(s => (
-                    <button
-                      key={s.id}
-                      onClick={() => handleSelectScenario(s.id)}
-                      className="w-full flex items-center gap-4 p-4 rounded-2xl border border-white/[0.07] bg-white/[0.04] hover:bg-white/[0.09] hover:border-white/20 transition-all duration-200 text-left group"
-                    >
-                      <span className="text-2xl w-9 text-center shrink-0">{s.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-bold text-sm">{s.label}</p>
-                        <p className="text-slate-500 text-xs mt-0.5">{s.desc}</p>
-                      </div>
-                      <Zap className="w-4 h-4 text-accent-blue opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
-                    </button>
-                  ))}
-                </div>
+<button
+  onClick={handleScreenCapture}
+  className="w-full flex items-center justify-center gap-3 p-5 rounded-2xl border border-accent-blue/30 bg-accent-blue/10 hover:bg-accent-blue/20 transition-all duration-200 text-white font-bold mb-4"
+>
+  <Camera className="w-5 h-5" />
+  Capture Screen / Window
+</button>
+                                  </div>
 
-                <p className="text-center text-slate-600 text-[10px] mt-6">
-                  Simulates Snipping Tool screen capture — hackathon demo mode
+                <p className="text-center text-slate-600 text-[12px] mt-6">
+                  Capture screenshots of suspicious sports content for AI-powered verification.
                 </p>
               </div>
             )}
+	    {step === 'preview' && (
+  <div className="p-8">
+    <h2 className="text-2xl font-bold text-white mb-4">
+      Screenshot Captured
+    </h2>
 
+    <img
+src={croppedImage || capturedImage}
+  alt="Captured"
+  onClick={() => setShowImageViewer(true)}
+className="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-90 transition"/>
+
+    <div className="flex gap-3">
+      <button
+        onClick={() => setStep('select')}
+        className="px-4 py-2 rounded-xl border border-white/10 text-white"
+      >
+        Capture Again
+      </button>
+
+      <button
+	onClick={async () => {
+  try {
+    setStep("analyzing");
+
+const imageToVerify =
+  croppedImage || capturedImage;
+
+const result = await verifyClaimWithGemini(
+  "",
+  imageToVerify
+);
+
+await saveVerificationResult(
+  "Live Scan Verification",
+  result
+);
+
+onVerify(result);
+  } catch (error) {
+    console.error(error);
+    setStep("error");
+  }
+}}
+        className="px-4 py-2 rounded-xl bg-accent-blue text-white"
+      >
+        Verify
+      </button>
+    </div>
+{showImageViewer && (
+  <div
+    className="fixed inset-0 z-[200] bg-black/90 flex items-center justify   center p-6"
+    onClick={() => setShowImageViewer(false)}
+  >
+    <div
+      className="max-w-7xl max-h-[90vh] overflow-auto"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <ReactCrop
+         crop={crop}
+         onChange={(c) => setCrop(c)}
+         onComplete={(c) => setCompletedCrop(c)}
+       >
+        <img
+  ref={imageRef}
+  src={capturedImage}
+  alt="Captured"
+  className="w-full rounded-xl border border-white/10"
+/>
+      </ReactCrop>
+<div className="flex justify-center gap-4 mt-6">
+ <button
+  onClick={() => {
+    const cropped = getCroppedImage();
+    setCroppedImage(cropped);
+    setShowImageViewer(false);
+  }}
+  className="px-5 py-2 rounded-xl border border-white/10 text-white"
+>
+  Done Cropping
+</button>
+</div>
+    </div>
+  </div>
+)}
+  </div>
+)}
             {/* ── SCANNING / ANALYZING ── */}
             {(step === 'scanning' || step === 'analyzing') && (
               <div className="p-10 flex flex-col items-center text-center">

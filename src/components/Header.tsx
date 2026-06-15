@@ -1,6 +1,10 @@
 import { motion } from 'motion/react';
 import { LayoutDashboard, Newspaper, ShieldCheck, Archive, User, LogIn } from 'lucide-react';
 import { cn } from '@/src/lib/utils';
+import { signInWithPopup, signOut } from "firebase/auth";
+import { auth, googleProvider } from "@/src/services/firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged, User as FirebaseUser } from "firebase/auth";
 
 interface HeaderProps {
   activeTab: string;
@@ -14,6 +18,32 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
     { id: 'insights', label: 'Insights', icon: LayoutDashboard },
     { id: 'archives', label: 'Archives', icon: Archive },
   ];
+
+const [user, setUser] = useState<FirebaseUser | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return unsubscribe;
+  }, []);
+
+const handleGoogleLogin = async () => {
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const handleLogout = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <header className="sticky top-0 w-full z-50 bg-obsidian/80 backdrop-blur-xl border-b border-white/10">
@@ -47,10 +77,14 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
         </nav>
 
         <div className="flex items-center gap-4 font-display">
-          <button className="text-slate-400 hover:text-white transition-colors text-sm font-semibold flex items-center gap-2">
-            <LogIn className="w-4 h-4" />
-            Log In
-          </button>
+          
+  <button
+  onClick={user ? handleLogout : handleGoogleLogin}
+  className="text-slate-400 hover:text-white transition-colors text-sm font-semibold flex items-center gap-2"
+>
+  <LogIn className="w-4 h-4" />
+  {user ? `Logout (${user.displayName})` : "Log In"}
+</button>
           <button className="bg-accent-blue text-white px-6 py-2 rounded-xl font-bold shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_30px_rgba(59,130,246,0.5)] active:scale-95 transition-all duration-200 text-sm">
             Get Pro
           </button>

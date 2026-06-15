@@ -4,6 +4,10 @@ import { Search, Link as LinkIcon, Camera, Upload, CheckCircle2, AlertTriangle, 
 import { cn } from '@/src/lib/utils';
 import { verifyClaimWithGemini, VerificationResultData } from '@/src/lib/gemini';
 import LiveScanModal from '@/src/components/LiveScanModal';
+import {
+  saveVerificationResult,
+  getVerificationByClaim
+} from '@/src/services/firestore';
 
 interface VerificationPageProps {
   onVerify: (result: VerificationResultData) => void;
@@ -18,6 +22,7 @@ export default function VerificationPage({ onVerify }: VerificationPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleVerify = async () => {
+    console.log("HANDLE VERIFY STARTED");
     if (!query && !imageBase64) return;
     setIsLoading(true);
     
@@ -31,7 +36,30 @@ export default function VerificationPage({ onVerify }: VerificationPageProps) {
     }, 2000);
 
     try {
-      const result = await verifyClaimWithGemini(query, imageBase64);
+console.log("SAVING TO FIRESTORE");
+      //await testFirestore();
+      let result;
+
+let cachedResult = null;
+
+if (query.trim()) {
+  cachedResult = await getVerificationByClaim(query);
+}
+
+if (cachedResult) {
+  console.log("Using cached verification");
+  result = cachedResult;
+} else {
+  console.log("Calling Gemini");
+
+  result = await verifyClaimWithGemini(query, imageBase64);
+
+console.log("IMAGE LENGTH:", imageBase64.length);
+
+await saveVerificationResult(
+  query || "Image Verification",
+  result
+);}
       clearInterval(textInterval);
       onVerify(result);
     } catch (error) {

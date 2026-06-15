@@ -18,6 +18,14 @@ export default function App() {
     setVerificationResult(result);
     setShowResult(true);
   }, []);
+  const handleOpenReport = useCallback(
+  (report: VerificationResultData) => {
+    setVerificationResult(report);
+    setActiveTab("verification");
+    setShowResult(true);
+  },
+  []
+);
 
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab);
@@ -37,7 +45,11 @@ export default function App() {
       case 'insights':
         return <InsightsPage />;
       case 'archives':
-        return <ArchivesPage />;
+  return (
+    <ArchivesPage
+      onOpenReport={handleOpenReport}
+    />
+  );
       default:
         return <VerificationPage onVerify={handleVerify} />;
     }
