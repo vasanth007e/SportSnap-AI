@@ -262,7 +262,7 @@ Jhon Chili Hacks🌶️🐷
 
 ## Hackathon
 
-Google Solution Challenge / Hack2Skill
+Google Solution Challenge
 
 ---
 
