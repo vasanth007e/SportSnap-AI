@@ -6,7 +6,17 @@
 
 SportSnap AI helps users instantly verify whether sports content seen on Instagram, X, YouTube Shorts, WhatsApp, and other social platforms is real or fake.
 
-From fake transfer rumors and misleading breaking news to deepfake athlete content, edited highlight clips, and AI-generated fake commentary — SportSnap AI helps users detect what is FACT and what is CAP using Gemini-powered verification and trusted source-backed reasoning.
+From fake transfer rumors and misleading breaking news to manipulated screenshots, edited highlight clips, and AI-generated misinformation, SportSnap AI helps users determine what is FACT, SUS, or CAP using Gemini-powered verification and evidence-based reasoning.
+
+---
+
+# Live Demo
+
+## Firebase Hosting
+
+https://sportsnap-ai.web.app
+
+Prototype deployed and accessible for judges and demonstration purposes.
 
 ---
 
@@ -14,13 +24,13 @@ From fake transfer rumors and misleading breaking news to deepfake athlete conte
 
 Sports misinformation spreads faster than truth.
 
-Fake transfer rumors, manipulated sports highlights, deepfake athlete interviews, false injury reports, and misleading breaking news regularly go viral across social media platforms.
+Fake transfer rumors, manipulated sports highlights, misleading social media posts, false injury reports, and AI-generated content regularly go viral across multiple platforms.
 
-Fans often rely on repost pages, meme accounts, and unverified sources, making real-time authenticity verification difficult.
+Fans often rely on repost pages, meme accounts, and unverified sources, making authenticity verification difficult during live content consumption.
 
-Existing verification methods are slow, manual, and inaccessible during live content consumption.
+Existing verification methods are slow, manual, fragmented, and inaccessible to everyday users.
 
-There is a need for a fast, user-friendly system that allows users to instantly verify suspicious sports content directly from where misinformation spreads.
+There is a need for a fast, user-friendly system that allows users to instantly verify suspicious sports content directly where misinformation spreads.
 
 ---
 
@@ -28,139 +38,164 @@ There is a need for a fast, user-friendly system that allows users to instantly 
 
 SportSnap AI is an AI-powered verification platform designed specifically for sports media authenticity.
 
-It allows users to:
+Users can:
 
-* Paste suspicious sports links or headlines
-* Upload screenshots and sports media posts
-* Use Quick Scan / Live Scan verification flow
-* Verify fake transfer rumors and breaking news
-* Detect manipulated highlight clips and reused old media
-* Identify deepfake athlete content and fake voice commentary
-* Cross-check claims using official club sources and trusted journalists
+* Verify suspicious sports claims
+* Upload screenshots and images
+* Use Live Scan workflows to capture suspicious content
+* Analyze transfer rumors and breaking news
+* Review verification history
+* Generate downloadable audit reports
+* Monitor verification insights through a dynamic analytics dashboard
 
-The system then generates:
+The platform then generates a verification verdict:
 
-## FACT / SUS / CAP Verdict
+## FACT / SUS / CAP
 
-along with:
+Along with:
 
 * Confidence Score
-* Source Credibility Analysis
-* Timeline Cross-Reference
-* Official Source References
-* Proof Explanation System
+* AI-Powered Explanation
+* Verification Reasoning
+* Historical Verification Tracking
+* Audit Report Generation
 
-This creates a fast and believable “Shazam for Sports Truth” experience.
+This creates a fast and intuitive “Shazam for Sports Truth” experience.
 
 ---
 
 # Core Features
 
-## Quick Scan Engine
+## AI-Powered Verification
 
-Capture suspicious sports content using upload or guided scan flow for instant verification.
+Uses Google Gemini to analyze sports-related claims and classify them into:
 
-## FACT / SUS / CAP Verdict System
+* FACT
+* SUS
+* CAP
 
-Simple and memorable authenticity verdicts powered by Gemini.
+with supporting reasoning and confidence scoring.
 
-## Confidence Score Engine
+---
 
-Provides percentage-based trust scoring for stronger decision making.
+## Image Verification
 
-## Source Credibility Analyzer
+Users can upload screenshots, social media posts, and sports-related images for verification.
 
-Ranks trust level of sources:
-Official > Verified > Media > Repost/Meme Pages
+---
 
-## Timeline Cross-Reference
+## Live Scan
 
-Detects old clips reposted as new breaking news.
+Capture suspicious content directly from the screen using browser-supported screen sharing APIs for rapid verification workflows.
 
-## Official Source Verification
+---
 
-Cross-checks against club accounts, league sources, player accounts, and trusted journalists.
+## Verification Archive
 
-## Image Upload Verification
+All verification sessions are automatically stored in Cloud Firestore and can be reviewed later through the Archives page.
 
-Users can upload screenshots directly for verification.
+---
 
-## Deepfake & Media Integrity Detection
+## Dynamic Insights Dashboard
 
-Detects suspicious edited clips, reused content, and fake athlete voice content.
+Provides real-time analytics including:
 
-## Trending Fake Alerts
+* Total Verifications
+* Fact Count
+* Cap Count
+* Verification Metrics
+* Verification History
+* Archive Analytics
 
-Highlights viral misinformation patterns and suspicious sports rumors.
+---
 
-## Verification History
+## PDF Audit Reports
 
-Stores previous scans and verification reports.
+Generate downloadable verification reports containing verification statistics and verification history.
+
+---
+
+## User Authentication
+
+Secure login and user session management powered by Firebase Authentication.
 
 ---
 
 # Demo Flow
 
-User sees suspicious sports content
+User encounters suspicious sports content
 
-→ Uploads image / pastes link / starts quick scan
+→ Uploads image / enters claim / starts Live Scan
 
-→ Gemini analyzes the claim
+→ Gemini analyzes the content
 
-→ Result page shows:
+→ Result page displays:
 
 # FACT / SUS / CAP
-
-# Live Demo
-
-## Firebase Hosting Link
-
-https://sportsnap-ai.web.app
-
-Prototype deployed and accessible for judges and demo evaluation.
-
 
 with:
 
 * Confidence Score
-* Source-backed reasoning
-* Source trust score
-* Timeline verification
-* Official references
+* Verification Reasoning
+* Verdict Explanation
+
+→ Verification automatically saved to Archive
+
+→ Insights Dashboard updates dynamically
+
+→ User can export verification reports as PDF
 
 Fast. Simple. Reliable.
 
 ---
 
-# Tech Stack
-
-## UI / Design
-
-* Google Stitch
-
-## Prototype & AI Logic
-
-* Google AI Studio
+# Technology Stack
 
 ## Frontend
 
-* React + Vite
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+
+---
 
 ## AI Engine
 
-* Gemini API
+* Google Gemini API
 
-## Backend
+---
 
-* Firebase (Auth, Firestore, Storage)
+## Backend & Cloud
 
-## Deployment
+* Firebase Authentication
+* Cloud Firestore
+* Firebase Hosting
 
-* Firebase Hosting / Vercel
+---
 
-## Final Product Refinement
+## Data Visualization
 
-* Antigravity
+* Recharts
+* React Circular Progressbar
+
+---
+
+## Report Generation
+
+* jsPDF
+
+---
+
+# System Architecture
+
+1. User submits a claim, image, or Live Scan.
+2. Gemini processes and evaluates the content.
+3. Verification verdict is generated.
+4. Result is stored in Firestore.
+5. Archives update automatically.
+6. Insights dashboard refreshes dynamically.
+7. Users can export audit reports as PDF.
 
 ---
 
@@ -174,34 +209,58 @@ SportSnap AI reduces misinformation spread by making authenticity verification i
 
 Instead of asking:
 
-“Is this real?”
+"Is this real?"
 
-users get:
+Users get:
 
-# FACT or CAP
+# FACT, SUS, or CAP
 
 instantly.
 
 ---
 
+# Prototype Notes
+
+This project was developed as a hackathon prototype focused on demonstrating a complete end-to-end verification workflow.
+
+Current implementation includes:
+
+* Firebase Authentication
+* Cloud Firestore Integration
+* Verification Archive
+* Dynamic Insights Dashboard
+* PDF Report Export
+* Gemini-Powered Verification
+* Firebase Hosting Deployment
+
+For demonstration purposes:
+
+* Firestore security rules are configured for rapid prototyping and evaluation.
+* Live Scan functionality depends on browser-supported screen capture APIs and is recommended for desktop browsers.
+* AI verification availability depends on Google Gemini API quota and service availability.
+
+---
+
 # Future Scope
 
-* Real-time mobile app integration
-* Direct Instagram / X share-to-verify support
-* Browser extension for quick verification
-* Advanced athlete deepfake voice detection
-* Real-time viral misinformation tracking
-* Expanded support for multiple sports leagues globally
+* Advanced deepfake detection
+* OCR-powered screenshot analysis
+* Browser extension integration
+* Mobile application support
+* Real-time misinformation monitoring
+* Multi-language support
+* Enhanced forensic media analysis
+* Administrative moderation dashboard
 
 ---
 
 # Team
 
-## Team Name:
+## Team Name
 
-Jhon Chili 🌶️🐷
+Jhon Chili Hacks🌶️🐷
 
-## Hackathon:
+## Hackathon
 
 Google Solution Challenge / Hack2Skill
 
@@ -209,11 +268,11 @@ Google Solution Challenge / Hack2Skill
 
 # Final Pitch
 
-## SportSnap AI helps users instantly verify whether viral sports content is FACT or CAP by combining quick scan workflows, source validation, media tampering detection, and official-source-backed AI reasoning.
+## SportSnap AI helps users instantly verify whether viral sports content is FACT, SUS, or CAP by combining AI-powered verification, image analysis, live scan workflows, verification archives, dynamic analytics, and downloadable audit reports.
 
 ---
 
-# Because in sports…
+# Because in sports...
 
 ## Hype is temporary.
 
